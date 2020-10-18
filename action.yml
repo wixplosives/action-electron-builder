@@ -30,6 +30,10 @@ inputs:
     description: Name of the optional NPM build script which is executed before `electron-builder`
     required: false
     default: build
+  publish_cmd:
+    description: Name of the optional NPM publish script which is executed instead of `electron-builder`
+    required: false
+    default: electron-build
   skip_build:
     description: Whether the action should execute the NPM build script before running `electron-builder`
     required: false
