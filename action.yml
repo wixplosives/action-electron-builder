@@ -1,4 +1,4 @@
-name: Electron Builder Action
+name: Electron Builder Action - Custom Publishing
 author: Samuel Meuli
 description: GitHub Action for building and releasing Electron apps
 
