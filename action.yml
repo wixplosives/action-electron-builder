@@ -55,6 +55,9 @@ inputs:
   app_root:
     description: Directory where `electron-builder` commands should be run
     required: false
+outputs:
+  resultFileName: # id of output
+    description: 'Filename of result executable'
 
 runs:
   using: node12

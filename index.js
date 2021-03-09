@@ -1,7 +1,7 @@
 const { execSync } = require("child_process");
 const { existsSync, readFileSync } = require("fs");
 const { join } = require("path");
-
+var fsExtra = require('fs-extra');
 /**
  * Logs to the console
  */
@@ -60,17 +60,26 @@ const getInput = (name, required) => {
 	return value;
 };
 
+function getFilesFromPath(path, extension) {
+    let files = fs.readdirSync( path );
+    return files.filter( file => file.match(new RegExp(`.*\.(${extension})`, 'ig')));
+}
+
+
+
 /**
  * Installs NPM dependencies and builds/releases the Electron app
  */
 const runAction = () => {
 	const platform = getPlatform();
-	const buildCmd = getInput("publish_cmd") || "electron-builder";
-	const release = getInput("release", true) === "true";
+	const publishCmd = getInput("publish_cmd") || "electron-builder";
+	const release = getInput("release") === "true";
 	const pkgRoot = getInput("package_root", true);
-	const buildScriptName = getInput("build_script_name", true);
+	const buildScriptName = getInput("build_script_name", "build");
 	const skipBuild = getInput("skip_build") === "true";
-	const useVueCli = getInput("use_vue_cli") === "true";
+	const skipBuild = getInput("skip_deps") === "true";
+	const publishToFolder = getInput("publish_to_folder") === "true";
+	const publishingFolder = getInput("publishing_folder","upload_folder") ;
 	const args = getInput("args") || "";
 	const maxAttempts = Number(getInput("max_attempts") || "1");
 
@@ -105,9 +114,12 @@ const runAction = () => {
 
 	// Disable console advertisements during install phase
 	setEnv("ADBLOCK", true);
-
-	log(`Installing dependencies using ${useNpm ? "NPM" : "Yarn"}…`);
-	run(useNpm ? "npm install" : "yarn", pkgRoot);
+	if (skip_deps) {
+		log("Skipping installing deps script because `skip_deps` option is set");
+	}else{
+		log(`Installing dependencies using ${useNpm ? "NPM" : "Yarn"}…`);
+		run(useNpm ? "npm install" : "yarn", pkgRoot);
+	}
 
 	// Run NPM build script if it exists
 	if (skipBuild) {
@@ -127,7 +139,7 @@ const runAction = () => {
 	}
 
 	log(`Building${release ? " and releasing" : ""} the Electron app…`);
-	const cmd = useVueCli ? "vue-cli-service electron:build" : buildCmd;
+	const cmd =  publishCmd;
 	for (let i = 0; i < maxAttempts; i += 1) {
 		try {
 			run(
@@ -145,6 +157,21 @@ const runAction = () => {
 				throw err;
 			}
 		}
+	}
+	if (publish_to_folder){
+		var extension = ""
+		if (platform=="mac"){
+			extension = ".dmg"
+		}else if (platform=="linux"){
+			extension = ".deb"
+		}else if (platform=="windows"){
+			extension = ".exe"
+		}		
+		const files = getFilesFromPath("./build", extension);
+		core.setOutput("resultFileName", files[0]);
+		files.forEach(function (item, index) {
+			fsExtra.copySync(path.resolve("build", file), path.resolve(publishingFolder, file));
+		});		
 	}
 };
 
