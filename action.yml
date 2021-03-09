@@ -58,7 +58,7 @@ inputs:
     description: Path to folder to put result files if publish_to_folder is enabled
     required: false
     default: "upload_folder"
-   skip_deps:
+  skip_deps:
     description: Skip dependency installation
     required: false
     default: "false"
