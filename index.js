@@ -77,7 +77,7 @@ const runAction = () => {
 	const pkgRoot = getInput("package_root", true);
 	const buildScriptName = getInput("build_script_name", "build");
 	const skipBuild = getInput("skip_build") === "true";
-	const skipBuild = getInput("skip_deps") === "true";
+	const skipDeps = getInput("skip_deps") === "true";
 	const publishToFolder = getInput("publish_to_folder") === "true";
 	const publishingFolder = getInput("publishing_folder","upload_folder") ;
 	const args = getInput("args") || "";
@@ -114,7 +114,7 @@ const runAction = () => {
 
 	// Disable console advertisements during install phase
 	setEnv("ADBLOCK", true);
-	if (skip_deps) {
+	if (skipDeps) {
 		log("Skipping installing deps script because `skip_deps` option is set");
 	}else{
 		log(`Installing dependencies using ${useNpm ? "NPM" : "Yarn"}…`);
