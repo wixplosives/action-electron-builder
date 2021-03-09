@@ -50,6 +50,18 @@ inputs:
     description: Maximum number of attempts for completing the build and release step
     required: false
     default: "1"
+  publish_to_folder:
+    description: Publish results to folder for later upload
+    required: false
+    default: "false"
+  publishing_folder:
+    description: Path to folder to put result files if publish_to_folder is enabled
+    required: false
+    default: "upload_folder"
+   skip_deps:
+    description: Skip dependency installation
+    required: false
+    default: "false"
 
   # Deprecated
   app_root:

@@ -158,7 +158,7 @@ const runAction = () => {
 			}
 		}
 	}
-	if (publish_to_folder){
+	if (publishToFolder){
 		var extension = ""
 		if (platform=="mac"){
 			extension = ".dmg"
